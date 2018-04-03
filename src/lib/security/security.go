@@ -54,8 +54,8 @@ func handleRedirect(w http.ResponseWriter, r *http.Request, session *sessions.Se
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	userCredential := &credential{
-		username: r.FormValue("username"),
-		password: r.FormValue("password"),
+		Username: r.FormValue("username"),
+		Password: r.FormValue("password"),
 	}
 	if isSuccessful(Login(userCredential)) {
 		session, _ := store.Get(r, "security")
@@ -68,10 +68,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func validateRegisterCredentials(w http.ResponseWriter, r *http.Request, c *credential) {
-	if IsRegistered(c.username) {
+	if IsRegistered(c.Username) {
 		addFlashMessage(w, r, "Username already taken!")
 		http.Redirect(w, r, "/register", http.StatusSeeOther)
-	} else if c.password != c.confirmationPassword {
+	} else if c.Password != c.ConfirmationPassword {
 		addFlashMessage(w, r, "Password does not match confirmation password!")
 		http.Redirect(w, r, "/register", http.StatusSeeOther)
 	}
@@ -79,9 +79,9 @@ func validateRegisterCredentials(w http.ResponseWriter, r *http.Request, c *cred
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	userCredential := &credential{
-		username:             r.FormValue("username"),
-		password:             r.FormValue("password"),
-		confirmationPassword: r.FormValue("confirmationPassword"),
+		Username:             r.FormValue("username"),
+		Password:             r.FormValue("password"),
+		ConfirmationPassword: r.FormValue("confirmationPassword"),
 	}
 	validateRegisterCredentials(w, r, userCredential)
 	if isSuccessful(Register(userCredential)) {
