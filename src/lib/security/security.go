@@ -11,10 +11,10 @@ var authKey, authKeyError = ioutil.ReadFile("../authKey")
 var encryptKey, encryptKeyError = ioutil.ReadFile("../encryptKey")
 var store = sessions.NewCookieStore(authKey, encryptKey)
 
-func Authenticate(h http.Handler) http.Handler {
+func Authenticate(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if isLoggedIn(w, r) {
-			h.ServeHTTP(w, r)
+			h(w, r)
 		}
 		session, _ := store.Get(r, "security")
 		session.Values["redirect-url"] = r.URL.Path

@@ -58,7 +58,6 @@ func main() {
 	views.RegisterStaticViews()
 	views.RegisterPublicViews()
 	views.RegisterSecurityViews()
-	views.RegisterTaskViews()
 
 	server.ListenAndServe()
 }

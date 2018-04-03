@@ -3,11 +3,12 @@ package views
 import (
 	"net/http"
 
+	"github.com/pchan37/studybuddy/src/lib/security"
 	"github.com/pchan37/studybuddy/src/lib/templateManager"
 )
 
 func RegisterPublicViews() {
-	http.HandleFunc("/", IndexPage)
+	http.HandleFunc("/", security.Authenticate(IndexPage))
 }
 
 func IndexPage(w http.ResponseWriter, r *http.Request) {
