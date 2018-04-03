@@ -1,0 +1,18 @@
+[submodule "vendor/github.com/oxtoacart/bpool"]
+	path = vendor/github.com/oxtoacart/bpool
+	url = https://github.com/oxtoacart/bpool
+[submodule "vendor/golang.org/x/crypto"]
+	path = vendor/golang.org/x/crypto
+	url = https://github.com/golang/crypto/
+[submodule "vendor/github.com/globalsign/mgo"]
+	path = vendor/github.com/globalsign/mgo
+	url = https://github.com/globalsign/mgo.git
+[submodule "vendor/github.com/gorilla/context"]
+	path = vendor/github.com/gorilla/context
+	url = https://github.com/gorilla/context
+[submodule "vendor/github.com/gorilla/securecookie"]
+	path = vendor/github.com/gorilla/securecookie
+	url = https://github.com/gorilla/securecookie
+[submodule "vendor/github.com/gorilla/sessions"]
+	path = vendor/github.com/gorilla/sessions
+	url = https://github.com/gorilla/sessions

@@ -1,0 +1,6 @@
+{
+    "LayoutPath": "templates/layouts/",
+    "IncludePath": "templates/",
+    "PrivateKeyPath": "../keys/app.pem",
+    "PublicKeyPath": "../keys/app.pem.pub"
+}
