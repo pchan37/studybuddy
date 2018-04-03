@@ -22,14 +22,19 @@ func RegisterSecurityViews() {
 func LoginDelegator(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		flashSession, _ := store.Get(r, "flashSession")
-		flashes := flashSession.Flashes()
-		flashSession.Save(r, w)
-		if len(flashes) > 0 {
-			templateManager.RenderTemplate(w, "login.tmpl", flashes[0])
-		} else {
-			templateManager.RenderTemplate(w, "login.tmpl", "")
+		if !security.IsLoggedIn(w, r) {
+			flashSession, _ := store.Get(r, "flashSession")
+			flashes := flashSession.Flashes()
+			flashSession.Save(r, w)
+			data := make(map[string]string)
+			if len(flashes) > 0 {
+				data["Messages"] = flashes[0].(string)
+			} else {
+				data["Messages"] = ""
+			}
+			templateManager.RenderTemplate(w, "login.tmpl", data)
 		}
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	case "POST":
 		security.LoginHandler(w, r)
 	}
@@ -38,14 +43,19 @@ func LoginDelegator(w http.ResponseWriter, r *http.Request) {
 func RegisterDelegator(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		flashSession, _ := store.Get(r, "flashSession")
-		flashes := flashSession.Flashes()
-		flashSession.Save(r, w)
-		if len(flashes) > 0 {
-			templateManager.RenderTemplate(w, "register.tmpl", flashes[0])
-		} else {
-			templateManager.RenderTemplate(w, "register.tmpl", "")
+		if !security.IsLoggedIn(w, r) {
+			flashSession, _ := store.Get(r, "flashSession")
+			flashes := flashSession.Flashes()
+			flashSession.Save(r, w)
+			data := make(map[string]string)
+			if len(flashes) > 0 {
+				data["Messages"] = flashes[0].(string)
+			} else {
+				data["Messages"] = ""
+			}
+			templateManager.RenderTemplate(w, "register.tmpl", data)
 		}
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	case "POST":
 		security.RegisterHandler(w, r)
 	}

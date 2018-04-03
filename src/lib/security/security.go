@@ -13,7 +13,7 @@ var store = sessions.NewCookieStore(authKey, encryptKey)
 
 func Authenticate(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if isLoggedIn(w, r) {
+		if IsLoggedIn(w, r) {
 			h(w, r)
 		}
 		session, _ := store.Get(r, "security")
@@ -23,7 +23,7 @@ func Authenticate(h http.HandlerFunc) http.HandlerFunc {
 	})
 }
 
-func isLoggedIn(w http.ResponseWriter, r *http.Request) (loggedIn bool) {
+func IsLoggedIn(w http.ResponseWriter, r *http.Request) (loggedIn bool) {
 	loggedIn = false
 	session, _ := store.Get(r, "security")
 

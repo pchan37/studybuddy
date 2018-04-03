@@ -12,5 +12,6 @@ func RegisterPublicViews() {
 }
 
 func IndexPage(w http.ResponseWriter, r *http.Request) {
-	templateManager.RenderTemplate(w, "index.tmpl", nil)
+	data := map[string]bool{"IsLoggedIn": security.IsLoggedIn(w, r)}
+	templateManager.RenderTemplate(w, "index.tmpl", data)
 }
