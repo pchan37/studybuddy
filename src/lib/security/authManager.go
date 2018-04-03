@@ -17,6 +17,7 @@ type credential struct {
 	username             string
 	password             string
 	confirmationPassword string
+	role                 string
 }
 
 func InitializeAuthManager(databaseName string) (session *mgo.Session) {
@@ -54,7 +55,7 @@ func Register(c *credential) (success bool) {
 		success = false
 	} else {
 		hashedPassword := getHashedPassword(c.password)
-		collection.Insert(bson.M{"username": c.username, "password": hashedPassword})
+		collection.Insert(bson.M{"username": c.username, "password": hashedPassword, "role": "student"})
 		success = true
 	}
 	return
@@ -72,42 +73,42 @@ func Login(c *credential) (success bool) {
 	return
 }
 
-func IsStudent(c *credential) {
-
+func IsStudent(c *credential) bool {
+	return c.role == "student"
 }
 
-func IsTeacherAssistant(c *credential) {
-
+func IsTeacherAssistant(c *credential) bool {
+	return c.role == "teacher_assistant"
 }
 
-func IsTeacher(c *credential) {
-
+func IsTeacher(c *credential) bool {
+	return c.role == "teacher"
 }
 
-func IsDeveloper(c *credential) {
-
+func IsDeveloper(c *credential) bool {
+	return c.role == "developer"
 }
 
 func AddStudent(c *credential) {
-
+	c.role = "student"
 }
 
 func DropStudent(c *credential) {
-
+	c.role = ""
 }
 
 func AddTeacherAssistant(c *credential) {
-
+	c.role = "teacher_assistant"
 }
 
 func DropTeacherAssistant(c *credential) {
-
+	c.role = ""
 }
 
 func AddTeacher(c *credential) {
-
+	c.role = "teacher"
 }
 
 func DropTeacher(c *credential) {
-
+	c.role = ""
 }

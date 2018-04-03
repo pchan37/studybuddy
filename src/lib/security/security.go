@@ -49,14 +49,18 @@ func handleRedirect(w http.ResponseWriter, r *http.Request, session *sessions.Se
 		session.Save(r, w)
 		http.Redirect(w, r, redirectURL, http.StatusTemporaryRedirect)
 	}
+	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	if isSuccessful(Login(&credential{r.FormValue("username"), r.FormValue("password"), ""})) {
+	userCredential := &credential{
+		username: r.FormValue("username"),
+		password: r.FormValue("password"),
+	}
+	if isSuccessful(Login(userCredential)) {
 		session, _ := store.Get(r, "security")
 		session.Values["authenticated"] = true
 		session.Save(r, w)
-		addFlashMessage(w, r, "Successfully logged in!")
 		handleRedirect(w, r, session)
 	}
 	addFlashMessage(w, r, "Incorrect username or password!")
@@ -75,18 +79,16 @@ func validateRegisterCredentials(w http.ResponseWriter, r *http.Request, c *cred
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	userCredential := &credential{
-		r.FormValue("username"),
-		r.FormValue("password"),
-		r.FormValue("confirmationPassword"),
+		username:             r.FormValue("username"),
+		password:             r.FormValue("password"),
+		confirmationPassword: r.FormValue("confirmationPassword"),
 	}
 	validateRegisterCredentials(w, r, userCredential)
 	if isSuccessful(Register(userCredential)) {
 		session, _ := store.Get(r, "security")
 		session.Values["authenticated"] = true
 		session.Save(r, w)
-		addFlashMessage(w, r, "Successfully registered!")
 		handleRedirect(w, r, session)
-		http.Redirect(w, r, "/register", http.StatusSeeOther)
 	}
 }
 
