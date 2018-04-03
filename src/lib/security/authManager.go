@@ -28,7 +28,6 @@ func InitializeAuthManager(databaseName string) (session *mgo.Session) {
 	log.Print("Creating database...")
 	database := session.DB(databaseName)
 	collection = database.C("authentication")
-	log.Println("Done!")
 	return
 }
 
@@ -64,7 +63,6 @@ func Register(c *credential) (success bool) {
 func Login(c *credential) (success bool) {
 	hashedPassword := getHashedPassword(c.password)
 	query := bson.M{"username": c.username, "password": hashedPassword}
-	log.Println(query)
 	credentialFound := credential{}
 	if !IsRegistered(c.username) {
 		success = false

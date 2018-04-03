@@ -2,7 +2,6 @@ package views
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -32,7 +31,6 @@ func LoginDelegator(w http.ResponseWriter, r *http.Request) {
 			templateManager.RenderTemplate(w, "login.tmpl", "")
 		}
 	case "POST":
-		log.Println("Hello")
 		security.LoginHandler(w, r)
 	}
 }
@@ -49,7 +47,6 @@ func RegisterDelegator(w http.ResponseWriter, r *http.Request) {
 			templateManager.RenderTemplate(w, "register.tmpl", "")
 		}
 	case "POST":
-		log.Println("Registering...")
 		security.RegisterHandler(w, r)
 	}
 }

@@ -2,7 +2,6 @@ package security
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -80,9 +79,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		r.FormValue("password"),
 		r.FormValue("confirmationPassword"),
 	}
-	log.Println("Validating...")
 	validateRegisterCredentials(w, r, userCredential)
-	log.Println("Successfully validated...")
 	if isSuccessful(Register(userCredential)) {
 		session, _ := store.Get(r, "security")
 		session.Values["authenticated"] = true

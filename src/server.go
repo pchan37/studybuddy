@@ -9,9 +9,7 @@ import (
 
 	"github.com/gorilla/context"
 
-	"github.com/pchan37/studybuddy/src/lib/dbManager"
 	"github.com/pchan37/studybuddy/src/lib/security"
-	"github.com/pchan37/studybuddy/src/lib/taskDatabase"
 	"github.com/pchan37/studybuddy/src/lib/templateManager"
 	"github.com/pchan37/studybuddy/src/utils"
 	"github.com/pchan37/studybuddy/src/views"
@@ -45,9 +43,6 @@ func main() {
 	config.logConfig()
 	templateManager.SetTemplateConfig(config.LayoutPath, config.IncludePath)
 	templateManager.LoadTemplates()
-
-	manager := taskDatabase.InitializeDatabase()
-	defer dbManager.Close(manager)
 
 	authManager := security.InitializeAuthManager("authentication")
 	defer authManager.Close()
