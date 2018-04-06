@@ -5,11 +5,17 @@ import (
 	"net/http"
 
 	"github.com/gorilla/sessions"
+	"github.com/pchan37/studybuddy/src/lib/templateManager"
 )
 
 var authKey, authKeyError = ioutil.ReadFile("../authKey")
 var encryptKey, encryptKeyError = ioutil.ReadFile("../encryptKey")
 var store = sessions.NewCookieStore(authKey, encryptKey)
+
+func GetSecuritySession(w http.ResponseWriter, r *http.Request) *sessions.Session {
+	session, _ := store.Get(r, "security")
+	return session
+}
 
 func Authenticate(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -20,6 +26,17 @@ func Authenticate(h http.HandlerFunc) http.HandlerFunc {
 		session.Values["redirect-url"] = r.URL.Path
 		session.Save(r, w)
 		http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+	})
+}
+
+func Authorize(h http.HandlerFunc, isAuthorized func(string) bool) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, _ := store.Get(r, "security")
+		role := session.Values["role"].(string)
+		if isAuthorized(role) {
+			h(w, r)
+		}
+		http.Redirect(w, r, "/permission_denied", http.StatusTemporaryRedirect)
 	})
 }
 
@@ -58,8 +75,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Password: r.FormValue("password"),
 	}
 	if isSuccessful(Login(userCredential)) {
+		fullCredential, _ := getUserCredential(userCredential.Username)
 		session, _ := store.Get(r, "security")
 		session.Values["authenticated"] = true
+		session.Values["role"] = fullCredential.Role
 		session.Save(r, w)
 		handleRedirect(w, r, session)
 	}
@@ -85,8 +104,10 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	validateRegisterCredentials(w, r, userCredential)
 	if isSuccessful(Register(userCredential)) {
+		fullCredential, _ := getUserCredential(userCredential.Username)
 		session, _ := store.Get(r, "security")
 		session.Values["authenticated"] = true
+		session.Values["role"] = fullCredential.Role
 		session.Save(r, w)
 		handleRedirect(w, r, session)
 	}
@@ -98,4 +119,8 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	session.Values["authenticated"] = false
 	session.Save(r, w)
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+}
+
+func NotAuthorizedHandler(w http.ResponseWriter, r *http.Request) {
+	templateManager.RenderTemplate(w, "403.tmpl", nil)
 }

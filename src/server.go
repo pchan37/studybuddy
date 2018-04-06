@@ -9,6 +9,8 @@ import (
 
 	"github.com/gorilla/context"
 
+	"github.com/pchan37/studybuddy/src/lib/announcements"
+	"github.com/pchan37/studybuddy/src/lib/dbManager"
 	"github.com/pchan37/studybuddy/src/lib/security"
 	"github.com/pchan37/studybuddy/src/lib/templateManager"
 	"github.com/pchan37/studybuddy/src/utils"
@@ -47,6 +49,9 @@ func main() {
 	authManager := security.InitializeAuthManager("authentication")
 	defer authManager.Close()
 
+	announcementsDB := announcements.InitializeAnnouncementsDB("studybuddy")
+	defer dbManager.Close(announcementsDB)
+
 	server := http.Server{
 		Addr:         "127.0.0.1:8080",
 		WriteTimeout: time.Second * 15,
@@ -55,7 +60,9 @@ func main() {
 		Handler:      context.ClearHandler(http.DefaultServeMux),
 	}
 
+	views.RegisterAPIViews()
 	views.RegisterStaticViews()
+	views.RegisterPrivateViews()
 	views.RegisterPublicViews()
 	views.RegisterSecurityViews()
 

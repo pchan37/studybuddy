@@ -1,0 +1,75 @@
+{{ define "title" }}Announcements{{ end }}
+
+
+{{ define "css" }}
+
+{{ end }}
+
+
+{{ define "navbar-content" }}
+
+<li><a href="/logout">Logout</a></li>
+
+{{ end }}
+
+
+{{ define "content" }}
+
+{{ range $_, $Announcement :=  .Announcements}}
+    <div class="card white no-margin no-rounded-corners">
+        <div class="row no-margin">
+            <div class="card-content">
+                <div class="row">
+                    <span class="card-title no-block extra-spacing">{{ $Announcement.Title }}</span>
+                    <span>{{ $Announcement.Time }}</span>
+                </div>
+                <div class="row">
+                    {{ $Announcement.Body }}
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}
+
+{{ if eq .Role "student" }}
+    <div class="container">
+        <div class="fixed-action-btn action-button-position">
+            <a id="compose-announcements-btn" class="btn-floating waves-effect waves-light red modal-trigger" href="#composeModal">
+                <i class="material-icons">add</i>
+            </a>
+        </div>
+    </div>
+
+    <div id="composeModal" class="modal">
+        <div class="modal-content">
+            <h4>Create Announcements</h4>
+            <form id="composeForm" action="/save_announcements" method="POST">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input placeholder="Title" id="title" type="text" class="validate" name="title">
+                        <label for="title">Title</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <textarea placeholder="Body" id="body" class="materialize-textarea validate" name="body"></textarea>
+                        <label for="body">Body</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" form="composeForm" class="modal-action modal-close waves-effect waves-black btn-flat">Create</button>
+            <a href="#" class="modal-action modal-close waves-effect waves-black btn-flat">Cancel</a>
+        </div>
+    </div>
+{{ end }}
+
+{{ end }}
+
+
+{{ define "js" }}
+
+<script type="text/javascript" src="/static/js/compose.js"></script>
+
+{{ end }}

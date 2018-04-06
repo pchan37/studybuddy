@@ -47,10 +47,18 @@ func getHashedPassword(password string) string {
 	return string(passwordHashBytes)
 }
 
-func IsRegistered(username string) (registered bool) {
+func getUserCredential(username string) (*credential, bool) {
 	query := bson.M{"username": username}
-	count, _ := collection.Find(query).Count()
-	registered = count != 0
+	userCredential := credential{}
+	err := collection.Find(query).One(&userCredential)
+	if err == nil {
+		return &userCredential, true
+	}
+	return nil, false
+}
+
+func IsRegistered(username string) (registered bool) {
+	_, registered = getUserCredential(username)
 	return
 }
 
@@ -66,54 +74,127 @@ func Register(c *credential) (success bool) {
 }
 
 func Login(c *credential) (success bool) {
-	query := bson.M{"username": c.Username}
-	credentialFound := credential{}
 	if !IsRegistered(c.Username) {
 		success = false
-	} else if err := collection.Find(query).One(&credentialFound); !isFatalError(err) {
+	} else if userCredential, ok := getUserCredential(c.Username); ok {
 		preHash := getPreHashedPassword(c.Password)
-		err = bcrypt.CompareHashAndPassword([]byte(credentialFound.Password), preHash[:])
+		err := bcrypt.CompareHashAndPassword([]byte(userCredential.Password), preHash[:])
 		success = err == nil
 	}
 	return
 }
 
-func IsStudent(c *credential) bool {
-	return c.Role == "student"
+func IsStudent(username string) bool {
+	if userCredential, success := getUserCredential(username); success {
+		return userCredential.Role == "student"
+	}
+	return false
 }
 
-func IsTeacherAssistant(c *credential) bool {
-	return c.Role == "teacher_assistant"
+func IsTeacherAssistant(username string) bool {
+	if userCredential, success := getUserCredential(username); success {
+		return userCredential.Role == "teacher_assistant"
+	}
+	return false
 }
 
-func IsTeacher(c *credential) bool {
-	return c.Role == "teacher"
+func IsTeacher(username string) bool {
+	if userCredential, success := getUserCredential(username); success {
+		return userCredential.Role == "teacher"
+	}
+	return false
 }
 
-func IsDeveloper(c *credential) bool {
-	return c.Role == "developer"
+func IsAdmin(username string) bool {
+	if userCredential, success := getUserCredential(username); success {
+		return userCredential.Role == "admin"
+	}
+	return false
 }
 
-func AddStudent(c *credential) {
-	c.Role = "student"
+func IsDeveloper(username string) bool {
+	if userCredential, success := getUserCredential(username); success {
+		return userCredential.Role == "developer"
+	}
+	return false
 }
 
-func DropStudent(c *credential) {
-	c.Role = ""
+func AddStudent(c *credential) bool {
+	if userCredential, success := getUserCredential(c.Username); success {
+		userCredential.Role = "student"
+		return true
+	}
+	return false
 }
 
-func AddTeacherAssistant(c *credential) {
-	c.Role = "teacher_assistant"
+func DropStudent(c *credential) bool {
+	if userCredential, success := getUserCredential(c.Username); success {
+		userCredential.Role = ""
+		return true
+	}
+	return false
 }
 
-func DropTeacherAssistant(c *credential) {
-	c.Role = ""
+func AddTeacherAssistant(c *credential) bool {
+	if userCredential, success := getUserCredential(c.Username); success {
+		userCredential.Role = "teacher_assistant"
+		return true
+	}
+	return false
 }
 
-func AddTeacher(c *credential) {
-	c.Role = "teacher"
+func DropTeacherAssistant(c *credential) bool {
+	if userCredential, success := getUserCredential(c.Username); success {
+		userCredential.Role = ""
+		return true
+	}
+	return false
 }
 
-func DropTeacher(c *credential) {
-	c.Role = ""
+func AddTeacher(c *credential) bool {
+	if userCredential, success := getUserCredential(c.Username); success {
+		userCredential.Role = "teacher"
+		return true
+	}
+	return false
+}
+
+func DropTeacher(c *credential) bool {
+	if userCredential, success := getUserCredential(c.Username); success {
+		userCredential.Role = ""
+		return true
+	}
+	return false
+}
+
+func AddAdmin(c *credential) bool {
+	if userCredential, success := getUserCredential(c.Username); success {
+		userCredential.Role = "admin"
+		return true
+	}
+	return false
+}
+
+func DropAdmin(c *credential) bool {
+	if userCredential, success := getUserCredential(c.Username); success {
+		userCredential.Role = ""
+		return true
+	}
+	return false
+}
+
+func AddDeveloper(c *credential) bool {
+	if userCredential, success := getUserCredential(c.Username); success {
+		userCredential.Role = "developer"
+		return true
+	}
+	return false
+}
+
+func DropDeveloper(c *credential) bool {
+	if userCredential, success := getUserCredential(c.Username); success {
+		userCredential.Role = ""
+		return true
+	}
+	return false
 }
