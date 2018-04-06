@@ -9,7 +9,7 @@ import (
 )
 
 func RegisterPrivateViews() {
-	http.HandleFunc("/", security.Authenticate(IndexPage))
+	http.HandleFunc("/", security.Authenticate(AnnouncementHandler))
 	http.HandleFunc("/announcements", security.Authenticate(AnnouncementHandler))
 }
 
