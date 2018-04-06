@@ -2,6 +2,7 @@ package security
 
 import (
 	"crypto/sha256"
+	"fmt"
 	"log"
 
 	"github.com/globalsign/mgo"
@@ -47,7 +48,7 @@ func getHashedPassword(password string) string {
 	return string(passwordHashBytes)
 }
 
-func getUserCredential(username string) (*credential, bool) {
+func GetUserCredential(username string) (*credential, bool) {
 	query := bson.M{"username": username}
 	userCredential := credential{}
 	err := collection.Find(query).One(&userCredential)
@@ -58,7 +59,7 @@ func getUserCredential(username string) (*credential, bool) {
 }
 
 func IsRegistered(username string) (registered bool) {
-	_, registered = getUserCredential(username)
+	_, registered = GetUserCredential(username)
 	return
 }
 
@@ -76,7 +77,7 @@ func Register(c *credential) (success bool) {
 func Login(c *credential) (success bool) {
 	if !IsRegistered(c.Username) {
 		success = false
-	} else if userCredential, ok := getUserCredential(c.Username); ok {
+	} else if userCredential, ok := GetUserCredential(c.Username); ok {
 		preHash := getPreHashedPassword(c.Password)
 		err := bcrypt.CompareHashAndPassword([]byte(userCredential.Password), preHash[:])
 		success = err == nil
@@ -85,115 +86,136 @@ func Login(c *credential) (success bool) {
 }
 
 func IsStudent(username string) bool {
-	if userCredential, success := getUserCredential(username); success {
+	if userCredential, success := GetUserCredential(username); success {
+		fmt.Println(userCredential.Role)
 		return userCredential.Role == "student"
 	}
 	return false
 }
 
 func IsTeacherAssistant(username string) bool {
-	if userCredential, success := getUserCredential(username); success {
+	if userCredential, success := GetUserCredential(username); success {
 		return userCredential.Role == "teacher_assistant"
 	}
 	return false
 }
 
 func IsTeacher(username string) bool {
-	if userCredential, success := getUserCredential(username); success {
+	if userCredential, success := GetUserCredential(username); success {
 		return userCredential.Role == "teacher"
 	}
 	return false
 }
 
 func IsAdmin(username string) bool {
-	if userCredential, success := getUserCredential(username); success {
+	if userCredential, success := GetUserCredential(username); success {
 		return userCredential.Role == "admin"
 	}
 	return false
 }
 
 func IsDeveloper(username string) bool {
-	if userCredential, success := getUserCredential(username); success {
+	if userCredential, success := GetUserCredential(username); success {
 		return userCredential.Role == "developer"
 	}
 	return false
 }
 
 func AddStudent(c *credential) bool {
-	if userCredential, success := getUserCredential(c.Username); success {
-		userCredential.Role = "student"
+	if userCredential, success := GetUserCredential(c.Username); success {
+		selector := bson.M{"username": userCredential.Username}
+		updator := bson.M{"$set": bson.M{"role": "student"}}
+		collection.Update(selector, updator)
 		return true
 	}
 	return false
 }
 
 func DropStudent(c *credential) bool {
-	if userCredential, success := getUserCredential(c.Username); success {
-		userCredential.Role = ""
+	if userCredential, success := GetUserCredential(c.Username); success {
+		selector := bson.M{"username": userCredential.Username}
+		updator := bson.M{"$set": bson.M{"role": ""}}
+		collection.Update(selector, updator)
 		return true
 	}
 	return false
 }
 
 func AddTeacherAssistant(c *credential) bool {
-	if userCredential, success := getUserCredential(c.Username); success {
-		userCredential.Role = "teacher_assistant"
+	if userCredential, success := GetUserCredential(c.Username); success {
+		selector := bson.M{"username": userCredential.Username}
+		updator := bson.M{"$set": bson.M{"role": "teacher_assistant"}}
+		collection.Update(selector, updator)
 		return true
 	}
 	return false
 }
 
 func DropTeacherAssistant(c *credential) bool {
-	if userCredential, success := getUserCredential(c.Username); success {
-		userCredential.Role = ""
+	if userCredential, success := GetUserCredential(c.Username); success {
+		selector := bson.M{"username": userCredential.Username}
+		updator := bson.M{"$set": bson.M{"role": ""}}
+		collection.Update(selector, updator)
 		return true
 	}
 	return false
 }
 
 func AddTeacher(c *credential) bool {
-	if userCredential, success := getUserCredential(c.Username); success {
-		userCredential.Role = "teacher"
+	if userCredential, success := GetUserCredential(c.Username); success {
+		selector := bson.M{"username": userCredential.Username}
+		updator := bson.M{"$set": bson.M{"role": "teacher"}}
+		collection.Update(selector, updator)
 		return true
 	}
 	return false
 }
 
 func DropTeacher(c *credential) bool {
-	if userCredential, success := getUserCredential(c.Username); success {
-		userCredential.Role = ""
+	if userCredential, success := GetUserCredential(c.Username); success {
+		selector := bson.M{"username": userCredential.Username}
+		updator := bson.M{"$set": bson.M{"role": ""}}
+		collection.Update(selector, updator)
 		return true
 	}
 	return false
 }
 
 func AddAdmin(c *credential) bool {
-	if userCredential, success := getUserCredential(c.Username); success {
-		userCredential.Role = "admin"
+	if userCredential, success := GetUserCredential(c.Username); success {
+		selector := bson.M{"username": userCredential.Username}
+		updator := bson.M{"$set": bson.M{"role": "admin"}}
+		collection.Update(selector, updator)
 		return true
 	}
 	return false
 }
 
 func DropAdmin(c *credential) bool {
-	if userCredential, success := getUserCredential(c.Username); success {
-		userCredential.Role = ""
+	if userCredential, success := GetUserCredential(c.Username); success {
+		selector := bson.M{"username": userCredential.Username}
+		updator := bson.M{"$set": bson.M{"role": ""}}
+		collection.Update(selector, updator)
 		return true
 	}
 	return false
 }
 
 func AddDeveloper(c *credential) bool {
-	if userCredential, success := getUserCredential(c.Username); success {
-		userCredential.Role = "developer"
+	if userCredential, success := GetUserCredential(c.Username); success {
+		selector := bson.M{"username": userCredential.Username}
+		updator := bson.M{"$set": bson.M{"role": "developer"}}
+		collection.Update(selector, updator)
 		return true
 	}
 	return false
 }
 
 func DropDeveloper(c *credential) bool {
-	if userCredential, success := getUserCredential(c.Username); success {
-		userCredential.Role = ""
+	if userCredential, success := GetUserCredential(c.Username); success {
+		selector := bson.M{"username": userCredential.Username}
+		updator := bson.M{"$set": bson.M{"role": ""}}
+		collection.Update(selector, updator)
 		return true
 	}
 	return false

@@ -75,7 +75,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Password: r.FormValue("password"),
 	}
 	if isSuccessful(Login(userCredential)) {
-		fullCredential, _ := getUserCredential(userCredential.Username)
+		fullCredential, _ := GetUserCredential(userCredential.Username)
 		session, _ := store.Get(r, "security")
 		session.Values["authenticated"] = true
 		session.Values["role"] = fullCredential.Role
@@ -104,7 +104,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	validateRegisterCredentials(w, r, userCredential)
 	if isSuccessful(Register(userCredential)) {
-		fullCredential, _ := getUserCredential(userCredential.Username)
+		fullCredential, _ := GetUserCredential(userCredential.Username)
 		session, _ := store.Get(r, "security")
 		session.Values["authenticated"] = true
 		session.Values["role"] = fullCredential.Role

@@ -1,0 +1,60 @@
+{{ define "title" }}Developer Console{{ end }}
+
+
+{{ define "css" }}
+
+{{ end }}
+
+
+{{ define "navbar-content" }}
+
+<li><a href="/logout">Logout</a></li>
+
+{{ end }}
+
+
+{{ define "content" }}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Change roles</h2>
+        </div>
+    </div>
+    <form id="adjustRoleForm" action="/adjust_roles" method="POST">
+        <div class="row">
+            <div class="input-field col s12">
+                <textarea placeholder="Teacher Assistants" id="teacher_assistants" class="materialize-textarea validate" name="teacher_assistants"></textarea>
+                <label for="teacher_assistants">Teacher Assistants</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <textarea placeholder="Teachers" id="teachers" class="materialize-textarea validate" name="teachers"></textarea>
+                <label for="teachers">Teachers</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <textarea placeholder="Admins" id="admins" class="materialize-textarea validate" name="admins"></textarea>
+                <label for="admins">Admins</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <textarea placeholder="Developers" id="developers" class="materialize-textarea validate" name="developers"></textarea>
+                <label for="developers">Developers</label>
+            </div>
+        </div>
+        <div class="row">
+            <button type="submit" form="adjustRoleForm" class="waves-effect waves-black btn-flat">Save</button>
+        </div>
+    </form>
+</div>
+
+{{ end }}
+
+
+{{ define "js" }}
+
+{{ end }}

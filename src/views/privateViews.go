@@ -11,6 +11,15 @@ import (
 func RegisterPrivateViews() {
 	http.HandleFunc("/", security.Authenticate(AnnouncementHandler))
 	http.HandleFunc("/announcements", security.Authenticate(AnnouncementHandler))
+	http.HandleFunc("/developers_console", security.Authorize(security.Authenticate(DeveloperConsoleHandler), IsDeveloper))
+}
+
+func IsStudent(role string) bool {
+	return role == "student"
+}
+
+func IsDeveloper(role string) bool {
+	return role == "developer"
 }
 
 func IndexPage(w http.ResponseWriter, r *http.Request) {
@@ -31,4 +40,8 @@ func AnnouncementHandler(w http.ResponseWriter, r *http.Request) {
 		Announcements: listOfAnnouncements,
 	}
 	templateManager.RenderTemplate(w, "announcement.tmpl", data)
+}
+
+func DeveloperConsoleHandler(w http.ResponseWriter, r *http.Request) {
+	templateManager.RenderTemplate(w, "developer.tmpl", nil)
 }
